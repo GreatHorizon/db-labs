@@ -45,10 +45,13 @@
 /*5. SELECT ORDER BY + TOP (LIMIT)*/
     /*1. С сортировкой по возрастанию ASC + ограничение вывода количества записей*/
         SELECT * FROM client ORDER BY  first_name ASC;
+
     /*2. С сортировкой по убыванию DESC*/
         SELECT * FROM client ORDER BY  first_name DESC;
+
     /*3. С сортировкой по двум атрибутам + ограничение вывода количества записей*/
         SELECT * FROM client ORDER BY  last_name, first_name  DESC limit 6;
+
     /*4. С сортировкой по первому атрибуту, из списка извлекаемых*/
         SELECT first_name, last_name FROM client ORDER BY 1;
 
@@ -77,10 +80,13 @@
 /*8. SELECT GROUP BY + HAVING*/
     /*1.*/
         SELECT  id_client, SUM(cost) FROM public.order GROUP BY id_client HAVING COUNT(cost) > 2;
+
     /*2.*/
         SELECT  id_client, MAX(cost) FROM public.order GROUP BY id_client HAVING MAX(cost::numeric) < 100000;
+
     /*3.*/
         SELECT  id_client, SUM(cost) FROM public.order GROUP BY id_client HAVING SUM(cost::numeric) > 100000;
+
 /*9. SELECT JOIN*/
     /*1. LEFT JOIN двух таблиц и WHERE по одному из атрибутов*/
         SELECT * FROM "order" LEFT JOIN client on "order".id_client = client.id_client WHERE client.id_client > 43;
@@ -99,5 +105,6 @@
 /*10. Подзапросы*/
     /*1. Написать запрос с WHERE IN (подзапрос)*/
         SELECT id_client, cost, order_date FROM "order" WHERE order_date IN ('1996-01-12', '2015-01-12');
+
     /*2. Написать запрос SELECT atr1, atr2, (подзапрос) FROM ...*/
         SELECT id_client, cost FROM "order" WHERE cost > (SELECT MIN(cost) FROM "order");

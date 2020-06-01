@@ -109,20 +109,20 @@ INSERT INTO room_in_booking
 COMMIT;
 
 /* 9.Добавить необходимые индексы для всех таблиц.*/
-CREATE INDEX booking_id_client_index
+CREATE INDEX IX_booking_id_client
 ON booking (id_client);
 
 CREATE INDEX client_name_index
 ON client (name);
 
-CREATE INDEX room_in_booking_ckeckin_date_checkout_date_index
+CREATE INDEX IX_room_in_booking_ckeckin_date_checkout_date_index
 ON room_in_booking(checkin_date, checkout_date);
 
-CREATE INDEX room_in_booking_id_room_id_hotel_index
+CREATE INDEX IX_room_in_booking_id_room_id_hotel_index
 ON room_in_booking(id_booking, id_room);
 
-CREATE INDEX hotel_name_index
+CREATE INDEX IX_hotel_name_index
 ON hotel(name);
 
-CREATE INDEX room_category_name_index
+CREATE INDEX IX_room_category_name_index
 ON room_category(name);

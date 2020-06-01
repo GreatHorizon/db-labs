@@ -72,9 +72,8 @@ WHERE company.name = 'AstraZeneca';
 UPDATE production
 SET price = price - (price * 0.2)
 WHERE id_production IN (
-    SELECT id_production
-    FROM production
-             INNER JOIN medicine ON production.id_medicine = medicine.id_medicine
+    SELECT id_production FROM production
+    INNER JOIN medicine ON production.id_medicine = medicine.id_medicine
     WHERE production.price > '3000'
       AND medicine.course_duration <= 7
 );

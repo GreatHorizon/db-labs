@@ -17,11 +17,11 @@ ALTER TABLE room_in_booking
 /*2. Выдать информцию о клиентах гостиниы "Космос", проживающих в номерах категории "Люкс" на 1 апреля 2019г.*/
 SELECT client.name, client.phone FROM
 room_in_booking
-LEFT JOIN room ON room_in_booking.id_room = room.id_room
-LEFT JOIN hotel ON room.id_hotel = hotel.id_hotel
-LEFT JOIN  room_category ON room_category.id_room_category = room.id_room_category
-LEFT JOIN  booking ON room_in_booking.id_booking = booking.id_booking
-LEFT JOIN client ON booking.id_client = client.id_client
+INNER JOIN room ON room_in_booking.id_room = room.id_room
+INNER JOIN hotel ON room.id_hotel = hotel.id_hotel
+INNER JOIN  room_category ON room_category.id_room_category = room.id_room_category
+INNER JOIN  booking ON room_in_booking.id_booking = booking.id_booking
+INNER JOIN client ON booking.id_client = client.id_client
 WHERE
       checkout_date >= '2019-04-01' AND
       checkin_date <= '2019-04-01' AND
@@ -30,13 +30,15 @@ WHERE
 
 /*3. Дать список свободных номеров всех гостиниц на 22 апреля.*/
 SELECT * FROM room
-WHERE id_room NOT IN
+LEFT JOIN
     (
         SELECT id_room FROM
         room_in_booking WHERE
         checkin_date <= '2019-04-22' AND
         checkout_date >= '2019-04-22'
-    );
+    ) AS booked_rooms
+ON booked_rooms.id_room = room.id_room
+WHERE booked_rooms.id_room IS NULL;
 
 /*4. Дать количество проживающих в гостинице “Космос” на 23 марта по каждой категории номеров*/
 SELECT count(room.id_room), room_category.name FROM room_in_booking
@@ -65,6 +67,7 @@ INNER JOIN room_in_booking ON
     room_in_booking.checkout_date = t.checkout_date
 INNER JOIN booking on room_in_booking.id_booking = booking.id_booking
 INNER JOIN client on booking.id_client = client.id_client;
+
 
 /*6. Продлить на 2 дня дату проживания в гостинице “Космос” всем клиентам
 комнат категории “Бизнес”, которые заселились 10 мая*/
@@ -102,11 +105,10 @@ INSERT INTO booking (id_booking,id_client, booking_date) VALUES (
         date('2020-08-20'));
 
 INSERT INTO room_in_booking
-    (id_room_in_booking, id_booking, id_room, checkin_date, checkout_date) VALUES (
-        3000,
-        (SELECT MAX(booking.id_booking) FROM booking), 10,
+    (id_room_in_booking, id_booking, id_room, checkin_date, checkout_date) VALUES
+        (3000, (SELECT MAX(booking.id_booking) FROM booking), 10,
         date('2020-09-25'), date('2020-09-25'));
-COMMIT;
+ROLLBACK;
 
 /* 9.Добавить необходимые индексы для всех таблиц.*/
 CREATE INDEX IX_booking_id_client

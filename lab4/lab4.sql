@@ -114,17 +114,23 @@ ROLLBACK;
 CREATE INDEX IX_booking_id_client
 ON booking (id_client);
 
-CREATE INDEX client_name_index
+CREATE INDEX IX_client_name
 ON client (name);
 
-CREATE INDEX IX_room_in_booking_ckeckin_date_checkout_date_index
+CREATE INDEX IX_room_in_booking_ckeckin_date_checkout_date
 ON room_in_booking(checkin_date, checkout_date);
 
-CREATE INDEX IX_room_in_booking_id_room_id_hotel_index
+CREATE INDEX IX_room_in_booking_id_room_id_hotel
 ON room_in_booking(id_booking, id_room);
 
-CREATE INDEX IX_hotel_name_index
+CREATE INDEX IX_hotel_name
 ON hotel(name);
 
-CREATE INDEX IX_room_category_name_index
+CREATE INDEX IX_room_id
+ON room(id_hotel);
+
+CREATE INDEX IX_room_id_room_category
+ON room(id_room_category);
+
+CREATE INDEX IX_room_category_name
 ON room_category(name);

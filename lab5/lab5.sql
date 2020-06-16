@@ -95,3 +95,5 @@ CREATE INDEX IX_order_date ON "order"(date);
 CREATE INDEX IX_production_id_company ON production(id_company);
 
 CREATE INDEX IX_production_id_medicine ON production(id_medicine);
+
+CREATE INDEX IX_dealer_id_company ON dealer(id_company);

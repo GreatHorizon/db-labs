@@ -84,16 +84,16 @@ CREATE INDEX IX_medicine_name ON medicine(name);
 
 CREATE INDEX IX_company_name ON company(name);
 
-CREATE INDEX IX_order_id_dealer ON "order"(id_dealer);
+CREATE INDEX "IX_order_id-dealer" ON "order"(id_dealer);
 
-CREATE INDEX IX_order_id_pharmacy ON "order"(id_pharmacy);
+CREATE INDEX "IX_order_id-pharmacy" ON "order"(id_pharmacy);
 
-CREATE INDEX IX_order_id_production ON "order"(id_production);
+CREATE INDEX "IX_order_id-production" ON "order"(id_production);
 
 CREATE INDEX IX_order_date ON "order"(date);
 
-CREATE INDEX IX_production_id_company ON production(id_company);
+CREATE INDEX "IX_production_id-company" ON production(id_company);
 
-CREATE INDEX IX_production_id_medicine ON production(id_medicine);
+CREATE INDEX "IX_production_id-medicine" ON production(id_medicine);
 
-CREATE INDEX IX_dealer_id_company ON dealer(id_company);
+CREATE INDEX "IX_dealer_id-company" ON dealer(id_company);

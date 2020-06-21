@@ -115,7 +115,7 @@ date('2020-08-20'));
 
 INSERT INTO room_in_booking
 (id_booking, id_room_in_booking, id_room, checkin_date, checkout_date) VALUES
-(5000, 5000, 10,date('2020-03-25'), date('2020-04-25'));
+(5000, 5000, 10, date('2020-03-25'), date('2020-04-25'));
 ROLLBACK;
 
 /* 9.Добавить необходимые индексы для всех таблиц.*/
@@ -141,3 +141,6 @@ ON hotel(name);
 
 CREATE INDEX "IX_room_category_name"
 ON room_category(name);
+
+CREATE INDEX "IX_client_name"
+ON client(name);

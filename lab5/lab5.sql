@@ -107,5 +107,3 @@ ON production(id_medicine);
 
 CREATE INDEX "IX_dealer_id-company"
 ON dealer(id_company);
-
-DROP INDEX "ix_production_price"

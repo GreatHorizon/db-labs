@@ -19,8 +19,8 @@ SELECT client.name, client.phone FROM
 room_in_booking
 INNER JOIN room ON room_in_booking.id_room = room.id_room
 INNER JOIN hotel ON room.id_hotel = hotel.id_hotel
-INNER JOIN  room_category ON room_category.id_room_category = room.id_room_category
-INNER JOIN  booking ON room_in_booking.id_booking = booking.id_booking
+INNER JOIN room_category ON room_category.id_room_category = room.id_room_category
+INNER JOIN booking ON room_in_booking.id_booking = booking.id_booking
 INNER JOIN client ON booking.id_client = client.id_client
 WHERE
       checkout_date >= '2019-04-01' AND
@@ -29,7 +29,7 @@ WHERE
       room_category.name = 'Люкс';
 
 /*3. Дать список свободных номеров всех гостиниц на 22 апреля.*/
-SELECT * FROM room
+SELECT id_hotel, id_room_category, number, price FROM room
 LEFT JOIN
     (
         SELECT id_room FROM
@@ -52,6 +52,11 @@ GROUP BY room_category.id_room_category;
 
 /*5. Дать список последних проживавших клиентов по всем комнатам гостиницы
 “Космос”, выехавшим в апреле с указанием даты выезда*/
+/*
+Необходимо использование подзапроса так как чтобы выбрать последнюю бронь,
+нужно воспользоваться оператором GROUP BY по id_room, а вне подзапроса
+таким образом не получится извлечь нужную нам информацию по клиентам*/
+
 SELECT client.name, room_in_booking.checkout_date, room_in_booking.id_room
 FROM (
     SELECT room.id_room, MAX(checkout_date) as checkout_date FROM room_in_booking
@@ -71,6 +76,7 @@ INNER JOIN client on booking.id_client = client.id_client;
 
 /*6. Продлить на 2 дня дату проживания в гостинице “Космос” всем клиентам
 комнат категории “Бизнес”, которые заселились 10 мая*/
+begin;
 UPDATE room_in_booking
 SET checkout_date = checkout_date + interval '2 day'
 WHERE room_in_booking.id_room_in_booking IN
@@ -82,8 +88,8 @@ WHERE room_in_booking.id_room_in_booking IN
     WHERE room_in_booking.checkin_date = '2019-05-10' AND
           hotel.name = 'Космос' AND
           room_category.name = 'Бизнес'
-    );
-
+);
+rollback;
 /* 7. Найти все "пересекающиеся" варианты проживания.
 Правильное состояние:не может быть забронирован один номер на одну
 дату несколько раз, т.к. нельзя заселиться нескольким клиентам в один номер.
@@ -99,38 +105,39 @@ WHERE B1.checkin_date < B2.checkin_date AND
 
 /* 8. Создать бронирование в транзакции */
 BEGIN;
-INSERT INTO booking (id_booking,id_client, booking_date) VALUES (
-        3000,
-        (SELECT client.id_client FROM client WHERE name = 'Якурин Владислав Эрнстович'),
-        date('2020-08-20'));
+--- Не работает
+/*INSERT INTO booking (id_client, booking_date) VALUES (
+(SELECT client.id_client FROM client WHERE name = 'Якурин Владислав Эрнстович'),
+        date('2020-08-20'));*/
+INSERT INTO booking (id_booking, id_client, booking_date) VALUES (
+5000, (SELECT client.id_client FROM client WHERE name = 'Якурин Владислав Эрнстович'),
+date('2020-08-20'));
 
 INSERT INTO room_in_booking
-    (id_room_in_booking, id_booking, id_room, checkin_date, checkout_date) VALUES
-        (3000, (SELECT MAX(booking.id_booking) FROM booking), 10,
-        date('2020-09-25'), date('2020-09-25'));
+(id_booking, id_room_in_booking, id_room, checkin_date, checkout_date) VALUES
+(5000, 5000, 10,date('2020-03-25'), date('2020-04-25'));
 ROLLBACK;
 
 /* 9.Добавить необходимые индексы для всех таблиц.*/
-CREATE INDEX "IX_booking_id-client"
-ON booking (id_client);
 
-CREATE INDEX IX_client_name
-ON client (name);
+CREATE INDEX "IX_room_in_booking_id-room_checkout_date"
+ON room_in_booking(id_room, checkout_date);
+
+CREATE INDEX "IX_room_in_booking_id-room_id-booking"
+ON room_in_booking(id_room);
 
 CREATE INDEX "IX_room_in_booking_ckeckin-date_checkout-date"
-ON room_in_booking(checkin_date, checkout_date);
+ON room_in_booking(checkin_date, checkout_date)
+INCLUDE (id_room_in_booking);
 
-CREATE INDEX "IX_room_in_booking_id-room_id-hotel"
-ON room_in_booking(id_booking, id_room);
+CREATE INDEX "IX_booking_id-client"
+ON booking("id_client");
 
-CREATE INDEX IX_hotel_name
+CREATE INDEX "IX_room_id-hotel_id-room-categoty"
+ON room(id_hotel, id_room_category);
+
+CREATE INDEX "IX_hotel_name"
 ON hotel(name);
 
-CREATE INDEX "IX_room_id_hotel"
-ON room(id_hotel);
-
-CREATE INDEX "IX_room_id-room-category"
-ON room(id_room_category);
-
-CREATE INDEX "IX_room_category-name"
+CREATE INDEX "IX_room_category_name"
 ON room_category(name);

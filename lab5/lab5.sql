@@ -34,13 +34,13 @@ WHERE
 /*3. Дать список лекарств компании “Фарма”,
 на которые не были сделаны заказы до 25 января.*/
 SELECT medicine.name FROM medicine
-WHERE  medicine.name NOT IN
+WHERE medicine.name NOT IN
 (
       SELECT medicine.name
       FROM "order"
-               INNER JOIN production ON "order".id_production = production.id_production
-               INNER JOIN company ON production.id_company = company.id_company
-               INNER JOIN medicine ON production.id_medicine = medicine.id_medicine
+            INNER JOIN production ON "order".id_production = production.id_production
+            INNER JOIN company ON production.id_company = company.id_company
+            INNER JOIN medicine ON production.id_medicine = medicine.id_medicine
       WHERE company.name = 'Фарма'
         AND "order".date < '2019-01-25'
 );
@@ -80,20 +80,32 @@ WHERE id_production IN (
 
 /*7. Добавить
 необходимые индексы*/
-CREATE INDEX IX_medicine_name ON medicine(name);
+CREATE INDEX IX_medicine_name
+ON medicine(name);
 
-CREATE INDEX IX_company_name ON company(name);
+CREATE INDEX IX_company_name
+ON company(name);
 
-CREATE INDEX "IX_order_id-dealer" ON "order"(id_dealer);
+CREATE INDEX "IX_order_id-dealer"
+ON "order"(id_dealer);
 
-CREATE INDEX "IX_order_id-pharmacy" ON "order"(id_pharmacy);
+CREATE INDEX "IX_order_id-pharmacy"
+ON "order"(id_pharmacy);
 
-CREATE INDEX "IX_order_id-production" ON "order"(id_production);
+CREATE INDEX "IX_order_id-production"
+ON "order"(id_production)
+INCLUDE (quantity);
 
-CREATE INDEX IX_order_date ON "order"(date);
+CREATE INDEX IX_order_date
+ON "order"(date);
 
-CREATE INDEX "IX_production_id-company" ON production(id_company);
+CREATE INDEX "IX_production_id-company"
+ON production(id_company);
 
-CREATE INDEX "IX_production_id-medicine" ON production(id_medicine);
+CREATE INDEX "IX_production_id-medicine"
+ON production(id_medicine);
 
-CREATE INDEX "IX_dealer_id-company" ON dealer(id_company);
+CREATE INDEX "IX_dealer_id-company"
+ON dealer(id_company);
+
+DROP INDEX "ix_production_price"

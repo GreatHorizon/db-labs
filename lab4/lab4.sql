@@ -52,7 +52,6 @@ GROUP BY room_category.id_room_category;
 
 /*5. Дать список последних проживавших клиентов по всем комнатам гостиницы
 “Космос”, выехавшим в апреле с указанием даты выезда*/
-/*
 
 SELECT client.name, room_in_booking.checkout_date, room_in_booking.id_room
 FROM (

@@ -101,13 +101,15 @@ WHERE B1.checkin_date < B2.checkin_date AND
 /* 8. Создать бронирование в транзакции */
 BEGIN;
 
-INSERT INTO booking (id_booking, id_client, booking_date) VALUES (
-5000, (SELECT client.id_client FROM client WHERE name = 'Якурин Владислав Эрнстович'),
+INSERT INTO booking (id_client, booking_date) VALUES (
+(SELECT client.id_client FROM client WHERE name = 'Якурин Владислав Эрнстович'),
 date('2020-08-20'));
 
 INSERT INTO room_in_booking
-(id_booking, id_room_in_booking, id_room, checkin_date, checkout_date) VALUES
-(5000, 5000, 10, date('2020-03-25'), date('2020-04-25'));
+(id_booking, id_room, checkin_date, checkout_date) VALUES
+(CURRVAL('booking_id_booking_seq'),
+ 10, date('2020-03-25'), date('2020-04-25'));
+
 ROLLBACK;
 
 /* 9.Добавить необходимые индексы для всех таблиц.*/
@@ -118,10 +120,11 @@ ON room_in_booking(id_room, checkout_date);
 CREATE INDEX "IX_room_in_booking_id-room_id-booking"
 ON room_in_booking(id_room);
 
-CREATE INDEX "IX_room_in_booking_ckeckin-date_checkout-date"
+CREATE INDEX "IX_id_room_ckeckin-date_checkout-date"
 ON room_in_booking(checkin_date, checkout_date)
-INCLUDE (id_room_in_booking);
+INCLUDE (id_room);
 
+drop index "IX_room_in_booking_ckeckin-date_checkout-date";
 CREATE INDEX "IX_booking_id-client"
 ON booking("id_client");
 

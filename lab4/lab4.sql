@@ -69,7 +69,6 @@ INNER JOIN room_in_booking ON
 INNER JOIN booking on room_in_booking.id_booking = booking.id_booking
 INNER JOIN client on booking.id_client = client.id_client;
 
-
 /*6. Продлить на 2 дня дату проживания в гостинице “Космос” всем клиентам
 комнат категории “Бизнес”, которые заселились 10 мая*/
 begin;
@@ -101,10 +100,7 @@ WHERE B1.checkin_date < B2.checkin_date AND
 
 /* 8. Создать бронирование в транзакции */
 BEGIN;
---- Не работает
-/*INSERT INTO booking (id_client, booking_date) VALUES (
-(SELECT client.id_client FROM client WHERE name = 'Якурин Владислав Эрнстович'),
-        date('2020-08-20'));*/
+
 INSERT INTO booking (id_booking, id_client, booking_date) VALUES (
 5000, (SELECT client.id_client FROM client WHERE name = 'Якурин Владислав Эрнстович'),
 date('2020-08-20'));
